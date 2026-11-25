@@ -1,0 +1,175 @@
+# ------------------------------
+# Deployment Resource
+# Responsible for creating and managing Pods
+# ------------------------------
+
+apiVersion: apps/v1          # Deployment API version
+kind: Deployment             # Resource type = Deployment
+
+metadata:
+  name: currencyservice      # Name of the Deployment
+  labels:
+    app: currencyservice     # Label attached to the Deployment (mainly for organization)
+
+spec:
+
+  # Deployment manages Pods having this label
+  selector:
+    matchLabels:
+      app: currencyservice
+
+  # Blueprint/template for creating Pods
+  template:
+
+    metadata:
+      labels:
+        app: currencyservice     # Every Pod created gets this label
+
+    spec:
+
+      # Pod will run using this ServiceAccount
+      # (Identity used for accessing Kubernetes API if required)
+      serviceAccountName: currencyservice
+
+      # Wait 5 seconds after sending SIGTERM before force killing the container
+      # Gives application time to shutdown gracefully
+      terminationGracePeriodSeconds: 5
+
+      # Pod-level Linux security settings
+      securityContext:
+
+        # Mounted volumes become accessible by Linux Group ID 1000
+        fsGroup: 1000
+
+        # Run process with Linux Group ID 1000
+        runAsGroup: 1000
+
+        # Prevent container from running as root user
+        runAsNonRoot: true
+
+        # Run application as Linux User ID 1000
+        runAsUser: 1000
+
+      containers:
+
+      - name: server          # Container name
+
+        # Container-level security settings
+        securityContext:
+
+          # Prevent process from gaining extra Linux privileges
+          allowPrivilegeEscalation: false
+
+          # Remove ALL Linux capabilities
+          # (Very secure container)
+          capabilities:
+            drop:
+              - ALL
+
+          # Don't run as a privileged container
+          privileged: false
+
+          # Container filesystem becomes read-only
+          # Application cannot modify root filesystem
+          readOnlyRootFilesystem: true
+
+        # Docker image to run
+        image: currencyservice
+
+        ports:
+
+        # Application inside container listens on port 7000
+        - name: grpc
+          containerPort: 7000
+
+        # Environment variables passed into container
+        env:
+
+        # Application reads PORT=7000
+        - name: PORT
+          value: "7000"
+
+        # Disable profiler inside application
+        # (Application specific setting)
+        - name: DISABLE_PROFILER
+          value: "1"
+
+        # Readiness Probe
+        # Checks if application is ready to receive traffic
+        readinessProbe:
+          grpc:
+            port: 7000
+
+        # Liveness Probe
+        # Checks if application is alive
+        # Kubernetes restarts container if this fails continuously
+        livenessProbe:
+          grpc:
+            port: 7000
+
+        # Resource Reservation and Limits
+        resources:
+
+          requests:
+
+            # Scheduler reserves at least 0.1 CPU (100m = 100 millicores)
+            cpu: 100m
+
+            # Scheduler reserves at least 64Mi RAM (64 mebibytes = 64 * 1024 * 1024 bytes)
+            memory: 64Mi
+
+          limits:
+
+            # Container cannot use more than 0.2 CPU
+            cpu: 200m
+
+            # Container cannot use more than 128Mi RAM
+            # Exceeding this may result in OOMKilled
+            memory: 128Mi
+
+---
+# ------------------------------
+# Service Resource
+# Provides stable network endpoint
+# ------------------------------
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: currencyservice
+
+  labels:
+    app: currencyservice
+
+spec:
+
+  # Internal service
+  # Accessible only from inside Kubernetes Cluster
+  type: ClusterIP
+
+  # Send traffic to Pods having this label
+  selector:
+    app: currencyservice
+
+  ports:
+
+  - name: grpc
+
+    # Service listens on port 7000
+    port: 7000
+
+    # Forward traffic to Pod's port 7000
+    targetPort: 7000
+
+---
+# ------------------------------
+# ServiceAccount
+# Gives Pod an identity inside Kubernetes
+# ------------------------------
+
+apiVersion: v1
+kind: ServiceAccount
+
+metadata:
+  name: currencyservice

@@ -1,0 +1,32 @@
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ $name }}-rollout
+spec:
+  replicas: {{ $svc.replicas | default $.Values.defaults.replicas }}
+  revisionHistoryLimit: 3
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $name }}
+    scaleDown: onsuccess
+  strategy:
+    canary:
+      maxUnavailable: 0
+      maxSurge: 1
+      steps:
+{{ toYaml ($svc.steps | default $.Values.defaults.steps) | indent 8 }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $name }}-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: {{ $name }}
+{{ end }}
+{{ end }}
