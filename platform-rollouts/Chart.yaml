@@ -1,5 +1,0 @@
-apiVersion: v2
-name: platform-rollouts
-type: application
-version: 1.0.0
-description: Reusable Argo Rollouts canary resources for Online Boutique services
