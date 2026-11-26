@@ -14,7 +14,7 @@ spec:
         app: currencyservice
     spec:
       serviceAccountName: currencyservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -22,10 +22,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -92,7 +88,7 @@ spec:
         app: productcatalogservice
     spec:
       serviceAccountName: productcatalogservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -100,10 +96,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -169,7 +161,6 @@ spec:
         app: checkoutservice
     spec:
       serviceAccountName: checkoutservice
-      terminationGracePeriodSeconds: 30
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -177,10 +168,6 @@ spec:
         runAsUser: 1000
       containers:
         - name: server
-          lifecycle:
-            preStop:
-              sleep:
-                seconds: 10
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -256,7 +243,6 @@ spec:
         app: shippingservice
     spec:
       serviceAccountName: shippingservice
-      terminationGracePeriodSeconds: 30
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -264,10 +250,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -334,7 +316,7 @@ spec:
         app: cartservice
     spec:
       serviceAccountName: cartservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -342,10 +324,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -481,7 +459,7 @@ spec:
         app: emailservice
     spec:
       serviceAccountName: emailservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -489,10 +467,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -560,7 +534,7 @@ spec:
         app: paymentservice
     spec:
       serviceAccountName: paymentservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -568,10 +542,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -639,7 +609,6 @@ spec:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       serviceAccountName: frontend
-      terminationGracePeriodSeconds: 30
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -647,10 +616,6 @@ spec:
         runAsUser: 1000
       containers:
         - name: server
-          lifecycle:
-            preStop:
-              sleep:
-                seconds: 10
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -770,7 +735,7 @@ spec:
         app: recommendationservice
     spec:
       serviceAccountName: recommendationservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -778,10 +743,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -851,7 +812,7 @@ spec:
         app: adservice
     spec:
       serviceAccountName: adservice
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
@@ -859,10 +820,6 @@ spec:
         runAsUser: 1000
       containers:
       - name: server
-        lifecycle:
-          preStop:
-            sleep:
-              seconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
