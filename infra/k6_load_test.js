@@ -21,22 +21,36 @@ export default function () {
   const homeRes = http.get(`${BASE_URL}/`);
   check(homeRes, { 'homepage 200': (r) => r.status === 200 });
 
-  // 2. View a Product (Sunglasses)
+  // 2. Switch currency before viewing the product
+  const currencyRes = http.post(`${BASE_URL}/setCurrency`, {
+    currency_code: 'EUR',
+  }, { redirects: 0 });
+  check(currencyRes, { 'set currency 302': (r) => r.status === 302 });
+
+  // 3. View a Product (Sunglasses)
   const productRes = http.get(`${BASE_URL}/product/OLJCESPC7Z`);
   check(productRes, { 'product page 200': (r) => r.status === 200 });
 
-  // 3. Add Item to Cart (hits Cart Service + Redis)
+  // 4. Add Item to Cart (hits Cart Service + Redis)
   const addCartRes = http.post(`${BASE_URL}/cart`, {
     product_id: 'OLJCESPC7Z',
     quantity: '1',
   });
   check(addCartRes, { 'add to cart 200': (r) => r.status === 200 });
 
-  // Small pause between user actions (~15-20 requests/sec total across 10 VUs)
+  // 5. Empty the cart at the end of the shopping flow
+  const emptyCartRes = http.post(`${BASE_URL}/cart/empty`, null, { redirects: 0 });
+  check(emptyCartRes, { 'empty cart 302': (r) => r.status === 302 });
+
+  // Pause before starting the next shopping flow
   sleep(1);
 }
 
 
 
 // run as docker container:
+// export TARGET_URL=http://4.247.243.173
 // docker run --rm -it -e TARGET_URL="$TARGET_URL" -v "$(pwd)/load-test.js:/load-test.js" grafana/k6 run /load-test.js
+
+// rollout and observe k6 load test results
+// kubectl rollout restart deployment/frontend && kubectl rollout status deployment/frontend
