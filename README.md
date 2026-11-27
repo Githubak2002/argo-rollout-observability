@@ -33,7 +33,15 @@ Deploy Online Boutique (`release/ak-k8s-manifests.yaml`) on Azure AKS with its d
 ### Commands Executed
 
 **Terminal 1 — Continuous User Traffic (k6):**
+
+Get the AKS load balancer IP from the `EXTERNAL-IP` column for the
+`frontend-external` service. Replace `<public_ip_aks_lb>` with that IP
+before running the Docker command in the same terminal.
+
 ```bash
+kubectl get svc frontend-external
+export TARGET_URL="http://<public_ip_aks_lb>"
+
 docker run --rm -it -e TARGET_URL="$TARGET_URL" -v "$(pwd)/load-test.js:/load-test.js" grafana/k6 run /load-test.js
 ```
 

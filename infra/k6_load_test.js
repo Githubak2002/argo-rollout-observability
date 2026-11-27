@@ -39,4 +39,6 @@ export default function () {
 
 
 // run as docker container:
+// export TARGET_URL=http://<public_ip_aks_lb>
+// export TARGET_URL=http://4.247.243.173
 // docker run --rm -it -e TARGET_URL="$TARGET_URL" -v "$(pwd)/load-test.js:/load-test.js" grafana/k6 run /load-test.js
